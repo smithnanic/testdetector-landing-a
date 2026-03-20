@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TestDetector — Stop guessing what your competitors are testing</title>
+  <meta name="description" content="Automatically detect A/B tests on any website. See the variants. Browse a visual history of every change.">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0D0F12;
+      --surface: #FAFAF8;
+      --text-primary: #F4F4F5;
+      --text-muted: #A1A1AA;
+      --text-secondary: #71717A;
+      --accent: #E8590C;
+      --accent-hover: #C94A09;
+      --border: rgba(229, 229, 228, 0.1);
+      --error: #DC2626;
+      --success: #16A34A;
+    }
+
+    body {
+      font-family: 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ─── Wordmark ─────────────────────────────────── */
+    .wordmark {
+      padding: 32px 0 0;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
+    }
+
+    /* ─── Hero ─────────────────────────────────────── */
+    .hero {
+      padding: 80px 0 0;
+    }
+
+    @media (max-width: 640px) {
+      .hero { padding: 48px 0 0; }
+    }
+
+    .hero h1 {
+      font-size: 40px;
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      max-width: 540px;
+    }
+
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 28px; }
+    }
+
+    .hero .subheadline {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: var(--text-muted);
+      max-width: 520px;
+    }
+
+    @media (max-width: 640px) {
+      .hero .subheadline { font-size: 16px; }
+    }
+
+    /* ─── Form ─────────────────────────────────────── */
+    .signup-form {
+      margin-top: 40px;
+      display: flex;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 640px) {
+      .signup-form {
+        flex-direction: column;
+      }
+    }
+
+    .signup-form input[type="email"] {
+      flex: 1;
+      height: 48px;
+      padding: 0 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .signup-form input[type="email"]::placeholder {
+      color: var(--text-secondary);
+    }
+
+    .signup-form input[type="email"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(232, 89, 12, 0.2);
+    }
+
+    .signup-form input[type="email"].error {
+      border-color: var(--error);
+    }
+
+    .signup-form button {
+      height: 48px;
+      padding: 0 24px;
+      font-family: 'Instrument Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: white;
+      background: var(--accent);
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.15s;
+    }
+
+    .signup-form button:hover {
+      background: var(--accent-hover);
+    }
+
+    .signup-form button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .form-message {
+      margin-top: 8px;
+      font-size: 13px;
+      min-height: 20px;
+    }
+
+    .form-message.error { color: var(--error); }
+    .form-message.success { color: var(--accent); }
+
+    .credibility {
+      margin-top: 24px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .credibility strong {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* ─── Value Props ──────────────────────────────── */
+    .value-props {
+      padding: 96px 0 0;
+    }
+
+    .value-prop {
+      margin-bottom: 56px;
+    }
+
+    .value-prop h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .value-prop p {
+      font-size: 16px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      max-width: 560px;
+    }
+
+    /* ─── Social Proof ─────────────────────────────── */
+    .social-proof {
+      padding: 48px 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .social-proof p {
+      font-size: 18px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      font-style: normal;
+    }
+
+    .social-proof .insight {
+      margin-top: 24px;
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ─── Final CTA ────────────────────────────────── */
+    .final-cta {
+      padding: 96px 0;
+    }
+
+    .final-cta h2 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .final-cta .subtitle {
+      font-size: 16px;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+
+    /* ─── Footer ───────────────────────────────────── */
+    footer {
+      padding: 32px 0;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="wordmark">TestDetector</div>
+
+    <!-- Hero -->
+    <section class="hero">
+      <h1>Stop guessing what your competitors are testing.</h1>
+      <p class="subheadline">Automatically detect A/B tests on any website. See the actual variants. Browse a visual history of every change.</p>
+
+      <form class="signup-form" id="signup-top" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+        <input type="email" name="email" placeholder="you@agency.com" required autocomplete="email" aria-label="Email address">
+        <button type="submit">Request Early Access</button>
+      </form>
+      <div class="form-message" id="msg-top" aria-live="polite"></div>
+
+      <p class="credibility">Built by a CRO lead who spent 8 years at <strong>Mint Mobile</strong> through the T-Mobile acquisition &mdash; and got tired of flying blind on competitor strategy.</p>
+    </section>
+
+    <!-- Value Props -->
+    <section class="value-props">
+      <div class="value-prop">
+        <h2>Detect competitor tests</h2>
+        <p>Know when competitors launch A/B tests. See the actual variants side by side. Understand their optimization hypotheses without guessing.</p>
+      </div>
+
+      <div class="value-prop">
+        <h2>Visual change alerts</h2>
+        <p>Get notified when a tracked site makes meaningful changes. Filter out the noise &mdash; no more false alarms from ad rotation or cache differences.</p>
+      </div>
+
+      <div class="value-prop">
+        <h2>Visual time machine</h2>
+        <p>Browse what any tracked site looked like on any date. Correlate site changes with performance shifts. Never answer "I don't know what changed" again.</p>
+      </div>
+    </section>
+
+    <!-- Social Proof -->
+    <section class="social-proof">
+      <p>Every CRO team we've talked to has the same blind spots. They know competitors are testing. They just can't see what.</p>
+      <p class="insight">We analyzed hundreds of sites and found that most A/B testing platforms leak detectable signals about active experiments. TestDetector uses this to show you what your competitors are running &mdash; without needing access to their tools.</p>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="final-cta">
+      <h2>Be first to know when we launch.</h2>
+      <p class="subtitle">Early access spots are limited. We'll email you when it's ready.</p>
+
+      <form class="signup-form" id="signup-bottom" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+        <input type="email" name="email" placeholder="you@agency.com" required autocomplete="email" aria-label="Email address">
+        <button type="submit">Request Early Access</button>
+      </form>
+      <div class="form-message" id="msg-bottom" aria-live="polite"></div>
+    </section>
+
+    <footer>&copy; 2026 TestDetector</footer>
+  </div>
+
+  <script>
+    document.querySelectorAll('.signup-form').forEach(form => {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = form.querySelector('button');
+        const input = form.querySelector('input');
+        const msgEl = form.nextElementSibling;
+
+        // Basic validation
+        if (!input.value || !input.value.includes('@')) {
+          input.classList.add('error');
+          msgEl.textContent = 'Enter a valid email address.';
+          msgEl.className = 'form-message error';
+          return;
+        }
+
+        input.classList.remove('error');
+        btn.disabled = true;
+        btn.textContent = 'Submitting...';
+
+        try {
+          const res = await fetch(form.action, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ email: input.value })
+          });
+
+          if (res.ok) {
+            form.innerHTML = '<p style="color: var(--accent); font-size: 18px; font-weight: 500;">You\'re on the list.</p><p style="color: var(--text-muted); font-size: 15px; margin-top: 8px;">We\'ll email you when early access opens.</p>';
+            msgEl.textContent = '';
+          } else {
+            throw new Error('Network error');
+          }
+        } catch {
+          btn.disabled = false;
+          btn.textContent = 'Request Early Access';
+          msgEl.textContent = 'Something went wrong. Try again.';
+          msgEl.className = 'form-message error';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
